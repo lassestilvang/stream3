@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { SearchBar } from '@/components/search-bar';
-import MovieCard from '@/components/movie-card';
-import { useAuth } from '@/hooks/use-auth';
-import { useMovies } from '@/hooks/use-movies';
-import { Movie } from '@/types';
+import { useState, useEffect } from "react";
+import { SearchBar } from "@/components/search-bar";
+import MovieCard from "@/components/movie-card";
+import { useAuth } from "@/hooks/use-auth";
+import { useMovies } from "@/hooks/use-movies";
+import { Movie } from "@/types";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const { searchResults, isLoading, error, searchMovies } = useMovies();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (searchQuery.trim()) {

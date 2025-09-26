@@ -1,13 +1,13 @@
 // components/navigation.tsx
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
-import { Button } from '@/components/ui/button';
-import { Moon, Sun, User, Film, Bookmark, Search } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { signIn, signOut } from 'next-auth/react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Moon, Sun, User, Film, Bookmark, Search } from "lucide-react";
+import { useTheme } from "next-themes";
+import { signIn, signOut } from "next-auth/react";
 
 export function Navigation() {
   const pathname = usePathname();
@@ -24,29 +24,37 @@ export function Navigation() {
             <Film className="h-6 w-6" />
             <span className="text-xl font-bold">MovieTracker</span>
           </Link>
-          
+
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            <Link 
-              href="/" 
-              className={`transition-colors hover:text-foreground/80 ${isActive('/') ? 'text-foreground' : 'text-foreground/60'}`}
+            <Link
+              href="/"
+              className={`transition-colors hover:text-foreground/80 ${
+                isActive("/") ? "text-foreground" : "text-foreground/60"
+              }`}
             >
               <div className="flex items-center gap-1">
                 <Search className="h-4 w-4" />
                 <span>Search</span>
               </div>
             </Link>
-            <Link 
-              href="/watched" 
-              className={`transition-colors hover:text-foreground/80 ${isActive('/watched') ? 'text-foreground' : 'text-foreground/60'}`}
+            <Link
+              href="/watched"
+              className={`transition-colors hover:text-foreground/80 ${
+                isActive("/watched") ? "text-foreground" : "text-foreground/60"
+              }`}
             >
               <div className="flex items-center gap-1">
                 <Film className="h-4 w-4" />
                 <span>Watched</span>
               </div>
             </Link>
-            <Link 
-              href="/watchlist" 
-              className={`transition-colors hover:text-foreground/80 ${isActive('/watchlist') ? 'text-foreground' : 'text-foreground/60'}`}
+            <Link
+              href="/watchlist"
+              className={`transition-colors hover:text-foreground/80 ${
+                isActive("/watchlist")
+                  ? "text-foreground"
+                  : "text-foreground/60"
+              }`}
             >
               <div className="flex items-center gap-1">
                 <Bookmark className="h-4 w-4" />
@@ -55,21 +63,21 @@ export function Navigation() {
             </Link>
           </nav>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             aria-label="Toggle theme"
           >
-            {theme === 'dark' ? (
+            {theme === "dark" ? (
               <Sun className="h-5 w-5" />
             ) : (
               <Moon className="h-5 w-5" />
             )}
           </Button>
-          
+
           {loading ? (
             <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
           ) : user ? (
@@ -93,27 +101,33 @@ export function Navigation() {
           )}
         </div>
       </div>
-      
+
       {/* Mobile navigation */}
       <div className="md:hidden border-t p-4">
         <div className="flex justify-around">
-          <Link 
-            href="/" 
-            className={`flex flex-col items-center gap-1 ${isActive('/') ? 'text-primary' : ''}`}
+          <Link
+            href="/"
+            className={`flex flex-col items-center gap-1 ${
+              isActive("/") ? "text-primary" : ""
+            }`}
           >
             <Search className="h-5 w-5" />
             <span className="text-xs">Search</span>
           </Link>
-          <Link 
-            href="/watched" 
-            className={`flex flex-col items-center gap-1 ${isActive('/watched') ? 'text-primary' : ''}`}
+          <Link
+            href="/watched"
+            className={`flex flex-col items-center gap-1 ${
+              isActive("/watched") ? "text-primary" : ""
+            }`}
           >
             <Film className="h-5 w-5" />
             <span className="text-xs">Watched</span>
           </Link>
-          <Link 
-            href="/watchlist" 
-            className={`flex flex-col items-center gap-1 ${isActive('/watchlist') ? 'text-primary' : ''}`}
+          <Link
+            href="/watchlist"
+            className={`flex flex-col items-center gap-1 ${
+              isActive("/watchlist") ? "text-primary" : ""
+            }`}
           >
             <Bookmark className="h-5 w-5" />
             <span className="text-xs">List</span>

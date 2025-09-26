@@ -34,6 +34,7 @@ const config = {
   session: {
     strategy: "jwt" as const, // Use JWT for session handling
   },
+  debug: false, // Enable debug logging
 };
 
 const { handlers } = NextAuth(config);
