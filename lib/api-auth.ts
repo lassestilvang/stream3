@@ -1,23 +1,39 @@
 // lib/api-auth.ts
 import "server-only";
 import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/lib/db";
 import { users } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
 import type { Session, User } from "next-auth";
 
 const config = {
   adapter: DrizzleAdapter(db),
   providers: [
-    GitHub({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    Credentials({
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, credentials.email as string))
+          .limit(1);
+        if (user && user.password === credentials.password) {
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          };
+        }
+        return null;
+      },
     }),
   ],
   callbacks: {
@@ -40,3 +56,4 @@ const config = {
 const { handlers } = NextAuth(config);
 
 export const { GET, POST } = handlers;
+export { config };

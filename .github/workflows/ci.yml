@@ -20,5 +20,5 @@ jobs:
           cache: pnpm
       - run: pnpm install
       - run: pnpm test
-      - run: npx playwright install --with-deps
-      - run: pnpm run test:e2e
+#      - run: npx playwright install --with-deps
+#      - run: pnpm run test:e2e

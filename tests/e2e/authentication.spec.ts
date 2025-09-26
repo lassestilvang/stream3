@@ -1,7 +1,50 @@
 // tests/e2e/authentication.spec.ts
 import { test, expect } from "@playwright/test";
+import { db } from "@/lib/db";
+import { users } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 test.describe("Authentication Flow", () => {
+  // Helper function to create test user
+  const createTestUser = async () => {
+    // Check if test user already exists
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, "test@example.com"))
+      .limit(1);
+
+    if (existingUser.length === 0) {
+      await db.insert(users).values({
+        id: "test-user-id",
+        name: "Test User",
+        email: "test@example.com",
+        password: "password123",
+      });
+    }
+  };
+
+  test("user can sign in with credentials", async ({ page }) => {
+    // Create test user in database
+    await createTestUser();
+
+    // Navigate to sign in page
+    await page.goto("/auth/signin");
+
+    // Fill in credentials
+    await page.getByLabel("Email").fill("test@example.com");
+    await page.getByLabel("Password").fill("password123");
+
+    // Submit form
+    await page.getByRole("button", { name: "Sign in" }).click();
+
+    // Should redirect to home page
+    await expect(page).toHaveURL("/");
+
+    // Should show authenticated navigation
+    await expect(page.getByText("Test User")).toBeVisible();
+  });
+
   test("user can sign in and access protected routes", async ({ page }) => {
     // Mock authenticated user session
     await page.addInitScript(() => {
@@ -66,13 +109,10 @@ test.describe("Authentication Flow", () => {
     await expect(page).toHaveURL(/\/auth\/signin/);
     await expect(page.getByText("Sign in to track your movies")).toBeVisible();
 
-    // Should show sign in options
-    await expect(
-      page.getByRole("button", { name: "Sign in with GitHub" })
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "Sign in with Google" })
-    ).toBeVisible();
+    // Should show credentials sign in form
+    await expect(page.getByLabel("Email")).toBeVisible();
+    await expect(page.getByLabel("Password")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Sign in" })).toBeVisible();
   });
 
   test("user can sign out", async ({ page }) => {
