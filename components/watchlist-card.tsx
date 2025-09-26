@@ -111,6 +111,7 @@ export function WatchlistCard({ watchlistItem, onRemove }: WatchlistCardProps) {
           variant="destructive"
           onClick={handleRemoveFromWatchlist}
           disabled={isRemoving}
+          aria-label="Remove from watchlist"
         >
           {isRemoving ? <X className="h-4 w-4" /> : <X className="h-4 w-4" />}
         </Button>

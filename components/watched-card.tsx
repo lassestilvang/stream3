@@ -186,7 +186,12 @@ export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
           </DialogContent>
         </Dialog>
 
-        <Button size="sm" variant="destructive" onClick={handleDelete}>
+        <Button
+          size="sm"
+          variant="destructive"
+          onClick={handleDelete}
+          aria-label="Delete watched item"
+        >
           <Trash2 className="h-4 w-4" />
         </Button>
       </CardFooter>
