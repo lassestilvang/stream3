@@ -8,7 +8,7 @@ export interface Movie {
   backdrop_path?: string;
   overview: string;
   vote_average: number;
-  media_type: 'movie' | 'tv';
+  media_type: "movie" | "tv";
   genre_ids: number[];
 }
 
@@ -21,7 +21,7 @@ export interface WatchedItem {
   backdrop_path?: string;
   overview: string;
   vote_average: number;
-  media_type: 'movie' | 'tv';
+  media_type: "movie" | "tv";
   watchedDate: string;
   rating?: number;
   notes?: string;
@@ -37,6 +37,17 @@ export interface WatchlistItem {
   backdrop_path?: string;
   overview: string;
   vote_average: number;
-  media_type: 'movie' | 'tv';
+  media_type: "movie" | "tv";
   addedAt: string;
+}
+
+import "next-auth";
+import type { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+    } & DefaultSession["user"];
+  }
 }

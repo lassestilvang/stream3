@@ -1,10 +1,10 @@
 // drizzle.config.ts
-import type { Config } from 'drizzle-kit';
+import type { Config } from "drizzle-kit";
 
 export default {
-  schema: './drizzle/schema.ts',
-  out: './drizzle/migrations',
-  dialect: 'postgresql',
+  schema: "./drizzle/schema.ts",
+  out: "./drizzle/migrations",
+  dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },

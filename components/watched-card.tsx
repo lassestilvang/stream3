@@ -1,20 +1,27 @@
 // components/watched-card.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { WatchedItem } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Star, Calendar, Edit3, Trash2, Eye } from 'lucide-react';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { updateWatchedItem, deleteWatchedItem } from '@/services/content-service';
-import { getImageUrl } from '@/lib/tmdb';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from "react";
+import Image from "next/image";
+import { WatchedItem } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Star, Calendar, Edit3, Trash2, Eye } from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { getImageUrl } from "@/lib/tmdb";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface WatchedCardProps {
   watchedItem: WatchedItem;
@@ -24,21 +31,26 @@ interface WatchedCardProps {
 export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [rating, setRating] = useState(watchedItem.rating || 0);
-  const [notes, setNotes] = useState(watchedItem.notes || '');
+  const [notes, setNotes] = useState(watchedItem.notes || "");
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await updateWatchedItem(watchedItem.id, {
-        rating: rating || null,
-        notes: notes || null,
+      const response = await fetch(`/api/watched?id=${watchedItem.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rating: rating || null,
+          notes: notes || null,
+        }),
       });
-      toast.success('Watched item updated successfully');
+      if (!response.ok) throw new Error("Failed to update");
+      toast.success("Watched item updated successfully");
       setIsEditing(false);
     } catch (error) {
-      console.error('Error updating watched item:', error);
-      toast.error('Failed to update watched item');
+      console.error("Error updating watched item:", error);
+      toast.error("Failed to update watched item");
     } finally {
       setIsSaving(false);
     }
@@ -46,27 +58,31 @@ export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
 
   const handleDelete = async () => {
     try {
-      await deleteWatchedItem(watchedItem.id);
-      toast.success('Watched item removed');
+      const response = await fetch(`/api/watched?id=${watchedItem.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete");
+      toast.success("Watched item removed");
       onRemove();
     } catch (error) {
-      console.error('Error removing watched item:', error);
-      toast.error('Failed to remove watched item');
+      console.error("Error removing watched item:", error);
+      toast.error("Failed to remove watched item");
     }
   };
 
-  const watchedDate = watchedItem.watchedDate 
-    ? format(new Date(watchedItem.watchedDate), 'MMM dd, yyyy') 
-    : 'Unknown date';
+  const watchedDate = watchedItem.watchedDate
+    ? format(new Date(watchedItem.watchedDate), "MMM dd, yyyy")
+    : "Unknown date";
 
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="relative aspect-[2/3] bg-muted">
         {watchedItem.poster_path ? (
-          <img
-            src={getImageUrl(watchedItem.poster_path, 'w500')}
+          <Image
+            src={getImageUrl(watchedItem.poster_path, "w500")}
             alt={watchedItem.title}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         ) : (
           <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -82,22 +98,27 @@ export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
           </div>
         )}
       </div>
-      
+
       <CardContent className="p-4">
-        <h3 className="font-semibold text-lg line-clamp-1">{watchedItem.title}</h3>
+        <h3 className="font-semibold text-lg line-clamp-1">
+          {watchedItem.title}
+        </h3>
         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-          {watchedItem.overview.substring(0, 60)}{watchedItem.overview.length > 60 ? '...' : ''}
+          {watchedItem.overview.substring(0, 60)}
+          {watchedItem.overview.length > 60 ? "..." : ""}
         </p>
-        
+
         <div className="flex items-center gap-1 mt-2 text-sm text-muted-foreground">
           <Calendar className="h-4 w-4" />
           <span>{watchedDate}</span>
         </div>
-        
+
         <div className="mt-2 flex flex-wrap gap-1">
-          <Badge variant="outline">{watchedItem.media_type === 'movie' ? 'Movie' : 'TV Show'}</Badge>
+          <Badge variant="outline">
+            {watchedItem.media_type === "movie" ? "Movie" : "TV Show"}
+          </Badge>
         </div>
-        
+
         {watchedItem.notes && (
           <div className="mt-2 text-sm">
             <p className="text-muted-foreground">Notes:</p>
@@ -105,7 +126,7 @@ export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
           </div>
         )}
       </CardContent>
-      
+
       <CardFooter className="p-4 flex gap-2">
         <Dialog>
           <DialogTrigger asChild>
@@ -121,7 +142,7 @@ export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
                 Update your rating and notes for {watchedItem.title}
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-4 py-4">
               <div>
                 <Label htmlFor="rating">Rating (1-10)</Label>
@@ -135,7 +156,7 @@ export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
                   placeholder="Rate from 1 to 10"
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="notes">Notes</Label>
                 <Textarea
@@ -146,30 +167,26 @@ export function WatchedCard({ watchedItem, onRemove }: WatchedCardProps) {
                 />
               </div>
             </div>
-            
+
             <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   setIsEditing(false);
                   setRating(watchedItem.rating || 0);
-                  setNotes(watchedItem.notes || '');
+                  setNotes(watchedItem.notes || "");
                 }}
               >
                 Cancel
               </Button>
               <Button onClick={handleSave} disabled={isSaving}>
-                {isSaving ? 'Saving...' : 'Save'}
+                {isSaving ? "Saving..." : "Save"}
               </Button>
             </div>
           </DialogContent>
         </Dialog>
-        
-        <Button 
-          size="sm" 
-          variant="destructive" 
-          onClick={handleDelete}
-        >
+
+        <Button size="sm" variant="destructive" onClick={handleDelete}>
           <Trash2 className="h-4 w-4" />
         </Button>
       </CardFooter>

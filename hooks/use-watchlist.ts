@@ -1,7 +1,6 @@
 // hooks/use-watchlist.ts
-import { useState, useEffect } from 'react';
-import { getWatchlistItems, removeFromWatchlist } from '@/services/content-service';
-import { WatchlistItem } from '@/types';
+import { useState, useEffect } from "react";
+import { WatchlistItem } from "@/types";
 
 export const useWatchlist = () => {
   const [watchlistItems, setWatchlistItems] = useState<WatchlistItem[]>([]);
@@ -13,11 +12,13 @@ export const useWatchlist = () => {
     setError(null);
 
     try {
-      const items = await getWatchlistItems(userId);
+      const response = await fetch("/api/watchlist?userId=" + userId);
+      if (!response.ok) throw new Error("Failed to fetch");
+      const items = await response.json();
       setWatchlistItems(items);
     } catch (err) {
-      console.error('Error fetching watchlist items:', err);
-      setError('Failed to fetch watchlist items. Please try again.');
+      console.error("Error fetching watchlist items:", err);
+      setError("Failed to fetch watchlist items. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -25,11 +26,16 @@ export const useWatchlist = () => {
 
   const removeFromWatchlistHandler = async (id: string, userId: string) => {
     try {
-      await removeFromWatchlist(id);
-      setWatchlistItems(prevItems => prevItems.filter(item => item.id !== id));
+      const response = await fetch("/api/watchlist?id=" + id, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to remove");
+      setWatchlistItems((prevItems) =>
+        prevItems.filter((item) => item.id !== id)
+      );
     } catch (err) {
-      console.error('Error removing from watchlist:', err);
-      setError('Failed to remove from watchlist. Please try again.');
+      console.error("Error removing from watchlist:", err);
+      setError("Failed to remove from watchlist. Please try again.");
       throw err;
     }
   };

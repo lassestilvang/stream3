@@ -1,5 +1,7 @@
 // middleware.ts
-export { auth as middleware } from '@/lib/auth';
+export default function middleware() {
+  // Middleware logic here if needed
+}
 
 // Be careful with the matcher - you may want to adjust this based on your needs
 export const config = {
@@ -11,6 +13,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };

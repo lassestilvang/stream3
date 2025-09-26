@@ -1,11 +1,15 @@
-// lib/auth.ts
+// lib/api-auth.ts
 import "server-only";
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/lib/db";
+import { users } from "../drizzle/schema";
 import type { Session, User } from "next-auth";
 
-const baseConfig = {
+const config = {
+  adapter: DrizzleAdapter(db),
   providers: [
     GitHub({
       clientId: process.env.GITHUB_ID!,
@@ -32,4 +36,6 @@ const baseConfig = {
   },
 };
 
-export const auth = NextAuth(baseConfig);
+const handler = NextAuth(config);
+
+export { handler as GET, handler as POST };
