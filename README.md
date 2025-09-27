@@ -113,7 +113,7 @@ npm run test:e2e
 ## Project Structure
 
 ```
-movie-tracker/
+/
 ├── app/                    # Next.js App Router pages
 │   ├── layout.tsx          # Root layout with navigation
 │   ├── page.tsx            # Home page with search
