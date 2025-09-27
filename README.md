@@ -35,7 +35,6 @@ A modern, professional movie/TV tracking web application built with Next.js 15, 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd movie-tracker
 ```
 
 2. Install dependencies:
