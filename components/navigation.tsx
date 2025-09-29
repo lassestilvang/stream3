@@ -95,9 +95,14 @@ export function Navigation() {
               </span>
             </div>
           ) : (
-            <Button onClick={() => signIn()} variant="default">
-              Sign In
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild variant="outline">
+                <Link href="/auth/signup">Sign Up</Link>
+              </Button>
+              <Button onClick={() => signIn()} variant="default">
+                Sign In
+              </Button>
+            </div>
           )}
         </div>
       </div>

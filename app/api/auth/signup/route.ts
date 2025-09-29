@@ -48,10 +48,21 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Generate user ID
+    const userId = crypto.randomUUID();
+
+    console.log("Creating user with values:", {
+      id: userId,
+      name: name.trim(),
+      email: email.trim(),
+      password: hashedPassword,
+    });
+
     // Create user
     const [newUser] = await db
       .insert(users)
       .values({
+        id: userId,
         name: name.trim(),
         email: email.trim(),
         password: hashedPassword,

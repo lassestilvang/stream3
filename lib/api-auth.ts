@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { users } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import type { Session, User } from "next-auth";
+import bcrypt from "bcrypt";
 
 const config = {
   adapter: DrizzleAdapter(db),
@@ -25,7 +26,7 @@ const config = {
           .from(users)
           .where(eq(users.email, credentials.email as string))
           .limit(1);
-        if (user && user.password === credentials.password) {
+        if (user && user.password && await bcrypt.compare(credentials.password as string, user.password as string)) {
           return {
             id: user.id,
             email: user.email,
